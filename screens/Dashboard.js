@@ -10,13 +10,27 @@ import { Button } from 'react-native-elements';
 
 
 class Dashboard extends Component {
-    state = { showModal: false }
+    state = { 
+        showModal: false,
+        city: null,
+        type: 0,
+        searching:false
+     }
     static navigationOptions = () => {
         return {
             tabBarVisible: false,
 
         };
 
+    }
+    onSearchPrices(){
+        this.setState({searching:true})
+        // let { data } = await axios.post(`${URL_ROOT}/predict`,{
+        //     type: this.state.type,
+        //     id:this.state.city
+        // })
+        this.setState({showModal:false,searching:false});
+        
     }
     render() {
         return (
@@ -45,8 +59,11 @@ class Dashboard extends Component {
                 </Swiper>
                 <Modal visible={this.state.showModal}  >
                     <View style={{ flex: 1 }}>
-                        <Filter />
-                        
+                        <Filter
+                            onSelectedCity = {city => this.setState({city: city})}
+                            onChangedType = { type => this.setState({type: type}) }
+                        />
+                        <Button disabled= { this.state.city? true: false} loading={this.state.searching}  title="Buscar" onPress={() => this.onSearchPrices() } containerStyle={{ width: '80%', alignSelf: 'center', marginBottom: 50 }} titleStyle={{ color: 'white' }} buttonStyle={{ backgroundColor: config.colors.red }} />
                     </View>
 
                 </Modal>

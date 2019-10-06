@@ -4,7 +4,8 @@ export default{
         gold:'#D4AC5D',
     },
     images:{
-        search: require('../assets/busqueda.png')
+        search: require('../assets/busqueda.png'),
+        logo: require('../assets/logo.jpeg')
     }
 
 }
