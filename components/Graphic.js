@@ -4,34 +4,7 @@ import { BarChart,LineChart} from 'react-native-chart-kit';
 import { ECharts } from "react-native-echarts-wrapper";
 import config from '../config';
 
-const data = {
-    labels: ['Lun', 'Mar', 'Mier', 'Juev', 'Vier', 'Sab','Dom'],
-    horizontalLabes:false,
-    datasets: [{
-        data: [10.50,11 , 10.90, 11, 10.60, 11],
-        labels:[]
-    }],
-    config:{
-        fillColor: config.colors.red,
-        yAxis:null
-    }
-}
 
-const option = {
-    xAxis: {
-      type: "category",
-      data: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-    },
-    yAxis: {
-      type: "value"
-    },
-    series: [
-      {
-        data: [820, 932, 901, 934, 1290, 1330, 1320],
-        type: "line"
-      }
-    ]
-  };
 const chartConfig = {
     backgroundGradientFrom: '#eff3ff',
     backgroundGradientTo: '#efefef',
@@ -43,11 +16,40 @@ const chartConfig = {
      // optional, default 3
 }
 class Graphic extends Component {
+    state = {
+        data :{
+            labels: ['Lun', 'Mar', 'Mier', 'Juev', 'Vier', 'Sab','Dom'],
+            horizontalLabes:false,
+            datasets: [{
+                data: [10.50,11 , 10.90, 11, 10.60, 11],
+                labels:[]
+            }],
+            config:{
+                fillColor: config.colors.red,
+                yAxis:null
+            }
+        }
+    };
+    componentWillMount(){
+        const data = {
+            labels: ['Lun', 'Mar', 'Mier', 'Juev', 'Vier', 'Sab','Dom'],
+            horizontalLabes:false,
+            datasets: [{
+                data: this.props.data,
+                labels:[]
+            }],
+            config:{
+                fillColor: config.colors.red,
+                yAxis:null
+            }
+        }
+        this.setState({data: data});
+    }
     render() {
         return (
             <View style={styles.body}>
                 <LineChart
-                    data={data}
+                    data={this.state.data}
                     width={350}
                     height={600}
                     svg={{ fill: config.colors.red }}

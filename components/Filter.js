@@ -3,13 +3,7 @@ import axios from 'axios';
 import React, { Component } from 'react';
 import { View, Text } from 'react-native';
 import { Dropdown } from 'react-native-material-dropdown';
-import { CheckBox } from 'react-native-elements';
 import config from '../config';
-import { connect } from 'react-redux';
-import {
-    getPrices,
- getCities
-} from '../redux/actions';
 
 class Filter extends Component {
     state ={
@@ -18,71 +12,67 @@ class Filter extends Component {
         cities: []
     }
     async componentWillMount(){
-        //let { data } = await axios.get(`${URL_ROOT}/get-cities`);
-        let aux=[
-            {
-                city: "Ejemplo 1",
-                id: 1
-            },
-            {
-                city: "Ejemplo 2",
-                id: 2
-            },
-            {
-                city: "Ejemplo 3",
-                id: 3
-            }
-        ];
-        this.setState({cities:aux})
-        let citiesNamesArray = [];
-        if(aux.length >0){
-            aux.map( 
-                cityObj =>{
-                    citiesNamesArray.push({value: cityObj.city});
+        try {
+            let aux = [];
+            let names = [];
+            let originCitiesReq = await axios.get(config.urls.originCities);
+            let endCitiesReq = await axios.get(config.urls.endCities);
+            if (originCitiesReq.data && endCitiesReq ){
+                if (originCitiesReq.data.length > 0){
+                    originCitiesReq.data.map(
+                        city => {
+                            aux.push({
+                                id: city.id,
+                                city: `+De ${city.city} hacia Sinaloa`,
+                                type: 0
+                            });
+                            names.push({
+                                value:`+De ${city.city} hacia Sinaloa`
+                            });
+                        }
+                    );
                 }
-            )
-        };
-        console.log(citiesNamesArray);
-        this.setState({citiesNames: citiesNamesArray});
-    }
-    onChangeType(type){
-        this.setState({type: type});
-        this.props.onChangedType(type);
+                if(endCitiesReq.data.length > 0){
+                    endCitiesReq.data.map(
+                        city => {
+                            aux.push({
+                                id: city.id,
+                                city: `De Sinaloa hacia ${city.city}`,
+                                type: 1
+                            });
+                            names.push({
+                                value:`De Sinaloa hacia ${city.city}`
+                            })
+                        }
+                    )
+                }
+                this.setState({
+                    cities: aux,
+                    citiesNames: names
+                })
+           
+            }
+            
+        } catch(err){
+            console.log(err);
+        }
+        
+
     }
     onSelectedCity (text) {
         let obj = _.find(this.state.cities, {city: text});
-        this.props.onSelectedCity(obj.id);
+        this.props.onSelectedCity(obj);
     }
     render() {
         return (
             <View style={styles.body}>
                 <Text style={styles.titleText}>Filtrar</Text>
+                <Text style={styles.subtitleText}>Seleccione el lugar donde se obtendra la información</Text>
                 <Dropdown label="Seleccionar el lugar"
                     data={this.state.citiesNames}
                     containerStyle={styles.pickerContainer}
                     onChangeText = { text => this.onSelectedCity(text)}
                 />
-                <Text style={styles.subtitleText}>El lugar donde se obtendra la información</Text>
-                <View style={{ flexDirection: 'row', width:'80%', justifyContent:'space-between',marginTop:15}}>
-                    <CheckBox
-                        center
-                        title='Origen'
-                        checkedIcon='dot-circle-o'
-                        uncheckedIcon='circle-o'
-                        containerStyle={{backgroundColor:'transparent',borderColor:0}}
-                        onPress={()=> this.onChangeType(0)}
-                        checked={this.state.type==0? true: false}
-                    />
-                    <CheckBox
-                        center
-                        title='Destino'
-                        checkedIcon='dot-circle-o'
-                        uncheckedIcon='circle-o'
-                        checked={this.state.type==1? true: false}
-                        onPress={()=> this.onChangeType(1)}
-                        containerStyle={{backgroundColor:'transparent',borderColor:0}}
-                    />
-                </View>
                 
             </View>
         );
@@ -93,7 +83,8 @@ const styles = {
         flex: 1,
         backgroundColor: 'white',
         alignItems: 'center',
-        marginTop: 15
+        marginTop: '10%',
+        padding: 15
 
     },
     titleText: {
@@ -104,12 +95,13 @@ const styles = {
 
     },
     pickerContainer: {
-        width: '80%'
+        width: '100%'
     },
     subtitleText: {
-        fontSize: 15,
-        color: 'lightgray',
-        fontWeight: '400'
+        fontSize: 20,
+        color: 'black',
+        fontWeight: '400',
+        textAlign:'justify'
     }
 
 };

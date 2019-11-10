@@ -1,5 +1,13 @@
 import React, { Component } from 'react';
-import { View, Text, Image, TouchableOpacity, Modal } from 'react-native'
+import { 
+    View, 
+    Text, 
+    Image, 
+    TouchableOpacity, 
+    Modal,
+    Platform, 
+    SafeAreaView 
+} from 'react-native'
 import Swiper from 'react-native-swiper'
 import config from '../config';
 import Graphic from '../components/Graphic';
@@ -14,7 +22,8 @@ class Dashboard extends Component {
         showModal: false,
         city: null,
         type: 0,
-        searching:false
+        searching:false,
+        prices: []
      }
     static navigationOptions = () => {
         return {
@@ -22,6 +31,10 @@ class Dashboard extends Component {
 
         };
 
+    }
+    componentWillMount(){
+        let prices = this.props.navigation.getParam('prices');
+        this.setState({prices: prices});
     }
     onSearchPrices(){
         this.setState({searching:true})
@@ -43,17 +56,21 @@ class Dashboard extends Component {
                 <Text style={styles.subtitleText}>
                     Precio por kilogramo:
                 </Text>
-                <Text style={styles.giantNumberText}>$ 5.08</Text>
+                <Text style={styles.giantNumberText}>{'$ '+Number(this.state.prices[0]).toFixed(2)}</Text>
                 <Text style={styles.subtitleText}>
                     Proximos días:
                 </Text>
 
-                <Swiper horizontal showsButtons={false}>
+                <Swiper horizontal showsButtons={false} loop={false}>
                     <View style={{ flex: 1, marginHorizontal: 30, marginTop: 10 }}>
-                        <Table />
+                        <Table  
+                            data={this.state.prices}
+                        />
                     </View>
                     <View style={{ flex: 1, width: '100%', height: '100%' }}>
-                        <Graphic />
+                        <Graphic 
+                            data={this.state.prices}
+                        />
                     </View>
 
                 </Swiper>

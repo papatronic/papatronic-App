@@ -4,27 +4,28 @@ import { Button } from 'react-native-elements';
 import Swiper  from 'react-native-swiper';
 import Filter from '../components/Filter';
 import config from '../config';
+import Axios from 'axios';
 
 class Slider extends Component {
     state ={
         city: null,
         type: 0,
-        searching:false
+        searching:false,
+        selected: false
     }
     static navigationOptions = () =>{
         return{
             tabBarVisible:false
         }
     }
-    onButonClick(){
-        console.log(this.state.city, this.state.type);
+    async onButonClick(){
         this.setState({searching:true})
-         // let { data } = await axios.post(`${URL_ROOT}/predict`,{
-        //     type: this.state.type,
-        //     id:this.state.city
-        // })
+        let { data } = await Axios.post(config.urls.predict,{
+            type: this.state.city.type,
+            id:this.state.city.id
+        });
         this.setState({searching:true})
-        this.props.navigation.navigate('dashboard');
+        this.props.navigation.navigate('dashboard', {prices: data});
     }
     render(){
         return(
@@ -42,10 +43,9 @@ class Slider extends Component {
                 </View>
                 <View style={{flex:1}}>
                     <Filter
-                        onSelectedCity = {city => this.setState({city: city})}
-                        onChangedType = { type => this.setState({type: type}) }
+                        onSelectedCity = {city => this.setState({city: city, selected: true})}
                     />
-                    <Button disabled= { this.state.city? true: false} loading={this.state.searching}  title="Comenzar!" onPress={()=> this.onButonClick()} containerStyle={{width:'80%',alignSelf:'center',marginBottom:50}}  titleStyle={{color:'white'}} buttonStyle={{backgroundColor:config.colors.red}} />
+                    <Button disabled= { !this.state.selected? true: false} loading={this.state.searching}  title="Comenzar!" onPress={()=> this.onButonClick()} containerStyle={{width:'80%',alignSelf:'center',marginBottom:50}}  titleStyle={{color:'white'}} buttonStyle={{backgroundColor:config.colors.red}} />
                 </View>
             </Swiper>
         );

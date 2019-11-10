@@ -14,17 +14,17 @@ const days = [
 
 class Table extends Component {
     renderItems() {
-        return days.map(
+        return this.props.data.map(
             day => {
                 return (
                     <View style={{ borderColor: 'gray', borderWidth: 1, borderRadius: 5, padding: 5, marginBottom: 5, flexDirection: 'row', width: '100%',justifyContent:'space-between' }}>
                         <View style={{ flexDirection: 'column', width: '60%' }}>
-                            <Text style={{ width: '90%',fontSize:17,marginBottom:10 }}>{day.dia}</Text>
-                            <Text style={{ width: '90%' }}>{day.fecha}</Text>
+                            <Text style={{ width: '90%',fontSize:17,marginBottom:10 }}>{'Dia'}</Text>
+                            <Text style={{ width: '90%' }}>{'Fecha'}</Text>
                         </View>
                         <View style={{ flexDirection: 'row', width: '30%',alignItems:'flex-end'}}>
                             <Text style={{ width: '20%',fontSize:20,color:'gray' }}>$</Text>
-                            <Text style={{ width: '70%',fontSize:25,color:config.colors.red}}>{day.precio}</Text>
+                            <Text style={{ width: '70%',fontSize:25,color:config.colors.red}}>{Number(day).toFixed(2)}</Text>
                         </View>
                     </View>
                 );
